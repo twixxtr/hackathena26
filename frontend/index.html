@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Sentinels | Security Testing Platform</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="glow-bg"></div>
+    
+    <header class="dashboard-header">
+        <h1>AI-Sentinels</h1>
+        <p class="subtitle">Advanced AI Security Testing Platform</p>
+    </header>
+
+    <main class="dashboard-grid">
+        <!-- Panel 1: The Hunter (Scanner) -->
+        <section class="panel glass-panel hunter-panel">
+            <div class="panel-header">
+                <h2>RADAR: Node Discovery</h2>
+                <div class="status-indicator"></div>
+            </div>
+            <div class="panel-body">
+                <div class="input-group">
+                    <label for="ip-range">Target Subnet / IP</label>
+                    <input type="text" id="ip-range" value="127.0.0.1" placeholder="e.g. 192.168.1.0/24">
+                </div>
+                <button id="btn-scan" class="btn btn-primary">Initialize Scan</button>
+                
+                <div class="results-container">
+                    <h3>Discovered Nodes</h3>
+                    <ul id="node-list" class="node-list">
+                        <li class="empty-state">No nodes discovered yet. Run scan.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Panel 2: The Tester (Attacker) -->
+        <section class="panel glass-panel tester-panel">
+            <div class="panel-header">
+                <h2>PROBE: Prompt Injection</h2>
+                <div class="status-indicator"></div>
+            </div>
+            <div class="panel-body">
+                <div class="input-group">
+                    <label for="api-key">OpenAI API Key (Optional for fallback)</label>
+                    <input type="password" id="api-key" placeholder="sk-...">
+                </div>
+                
+                <div class="target-display">
+                    <span class="label">Current Target:</span>
+                    <span id="active-target" class="value">None selected</span>
+                </div>
+
+                <div class="input-group" id="model-selector-group" style="display: none;">
+                    <label for="model-select">Select Model</label>
+                    <select id="model-select" class="select-css">
+                        <option value="">Loading models...</option>
+                    </select>
+                </div>
+
+                <button id="btn-attack" class="btn btn-danger" disabled>Launch Attack</button>
+                
+                <div class="terminal-container">
+                    <div class="terminal-header">
+                        <div class="dots"><span></span><span></span><span></span></div>
+                        <span class="title">tester_stdout</span>
+                    </div>
+                    <div id="attack-log" class="terminal-body">
+                        > Waiting for target selection...
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Panel 3: The Hardener (Defense) -->
+        <section class="panel glass-panel hardener-panel">
+            <div class="panel-header">
+                <h2>SHIELD: Remediation</h2>
+                <div id="risk-badge" class="badge badge-safe">SAFE</div>
+            </div>
+            <div class="panel-body flex-col">
+                <div class="risk-assessment">
+                    <p id="risk-reason">System secure. No vulnerabilities detected.</p>
+                </div>
+                
+                <div class="fix-controls">
+                    <select id="fix-type" class="select-css">
+                        <option value="nginx">Nginx Reverse Proxy Auth</option>
+                        <option value="k8s">Kubernetes NetworkPolicy</option>
+                    </select>
+                    <button id="btn-harden" class="btn btn-success" disabled>Generate Fix</button>
+                    <button id="btn-deploy" class="btn btn-primary" style="display: none;">Deploy Fix</button>
+                </div>
+                
+                <div class="code-container">
+                    <pre><code id="fix-code">// Remediation code will appear here after analysis.</code></pre>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/app.js?v=3"></script>
+</body>
+</html>

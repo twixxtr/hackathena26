@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Security Hunter - Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #0b0c10; color: white; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #00ff66; color: black; }
+        .info { background: #66fcf1; color: black; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-primary { background: #45a29e; color: white; }
+        .btn-danger { background: #ff003c; color: white; }
+        .result { margin: 10px 0; padding: 10px; background: #1f2833; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 AI Security Hunter - Status Check</h1>
+        
+        <div class="status info">
+            <h3>🌐 Services Status</h3>
+            <p>Backend: <span id="backend-status">Checking...</span></p>
+            <p>Frontend: <span id="frontend-status">Checking...</span></p>
+            <p>Ollama AI: <span id="ollama-status">Checking...</span></p>
+        </div>
+        
+        <div class="status info">
+            <h3>🎯 Quick Actions</h3>
+            <button class="btn-primary" onclick="testScanner()">Test Scanner</button>
+            <button class="btn-danger" onclick="testAttack()">Test Attack</button>
+            <button class="btn-primary" onclick="openMainInterface()">Open Main Interface</button>
+        </div>
+        
+        <div id="results" class="result" style="display: none;">
+            <h3>📊 Results</h3>
+            <div id="result-content"></div>
+        </div>
+    </div>
+
+    <script>
+        async function checkServices() {
+            // Check backend
+            try {
+                const response = await fetch('/api/scan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ip_range: '127.0.0.1/32' })
+                });
+                document.getElementById('backend-status').textContent = '✅ Running';
+                document.getElementById('backend-status').className = 'success';
+            } catch (error) {
+                document.getElementById('backend-status').textContent = '❌ Error: ' + error.message;
+            }
+            
+            // Check Ollama
+            try {
+                const response = await fetch('http://localhost:11434/api/tags');
+                document.getElementById('ollama-status').textContent = '✅ Running';
+                document.getElementById('ollama-status').className = 'success';
+            } catch (error) {
+                document.getElementById('ollama-status').textContent = '❌ Not accessible';
+            }
+            
+            // Frontend is running if you can see this page
+            document.getElementById('frontend-status').textContent = '✅ Running';
+            document.getElementById('frontend-status').className = 'success';
+        }
+        
+        async function testScanner() {
+            const results = document.getElementById('results');
+            const content = document.getElementById('result-content');
+            
+            results.style.display = 'block';
+            content.innerHTML = '<p>🔍 Testing scanner...</p>';
+            
+            try {
+                const response = await fetch('/api/scan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ip_range: '127.0.0.1/32' })
+                });
+                const data = await response.json();
+                
+                let html = '<h4>✅ Scanner Results:</h4>';
+                html += `<p>Found ${data.nodes.length} AI service(s)</p>`;
+                
+                data.nodes.forEach(node => {
+                    html += `<p>🎯 ${node.ai_type} at ${node.ip}:${node.port}</p>`;
+                });
+                
+                content.innerHTML = html;
+            } catch (error) {
+                content.innerHTML = '<p>❌ Scanner error: ' + error.message + '</p>';
+            }
+        }
+        
+        async function testAttack() {
+            const results = document.getElementById('results');
+            const content = document.getElementById('result-content');
+            
+            results.style.display = 'block';
+            content.innerHTML = '<p>⚡ Testing attack...</p>';
+            
+            try {
+                const response = await fetch('/api/attack', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        target_ip: '127.0.0.1',
+                        target_port: 11434,
+                        target_model: 'tinyllama:latest',
+                        api_key: ''
+                    })
+                });
+                const data = await response.json();
+                
+                let html = '<h4>⚡ Attack Results:</h4>';
+                html += `<p>🎯 Risk Level: ${data.overall_risk}</p>`;
+                html += `<p>📊 Attacks Launched: ${data.attack_summary.total_attacks}</p>`;
+                
+                content.innerHTML = html;
+            } catch (error) {
+                content.innerHTML = '<p>❌ Attack error: ' + error.message + '</p>';
+            }
+        }
+        
+        function openMainInterface() {
+            window.open('/', '_blank');
+        }
+        
+        // Check services on load
+        checkServices();
+    </script>
+</body>
+</html>

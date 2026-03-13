@@ -1,0 +1,1 @@
+{"status":"success","nodes":[{"ip":"127.0.0.1","port":11434,"is_ai":true,"models":["tinyllama:latest"]}]}
